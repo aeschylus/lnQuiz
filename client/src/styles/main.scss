@@ -1,0 +1,144 @@
+// Google Fonts
+@import url(http://fonts.googleapis.com/css?family=Roboto+Slab|Open+Sans:400italic,700italic,400,700);
+
+// Font Variables
+$roboto-slab: 'Roboto Slab', serif;
+$helvetica: 'helvetica neue', sans-serif;
+$header-font: $roboto-slab;
+
+// Styles
+body {
+  font-family: $helvetica;
+  font-weight: normal;
+  color: white;
+  background: black;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $helvetica;
+  font-weight: bold;
+}
+
+.button {
+  font-family: $roboto-slab;
+  font-weight: bold;
+  padding: 10px;
+  border: 2px solid black;
+  border-radius: 8px;
+  z-index: 0;
+  position: absolute;
+  &:hover {
+    cursor: pointer;
+  border: 3px solid black;
+  background: rgba(0,0,0,0.1);
+  }
+}
+
+#welcome-message {
+  position: absolute;
+  top:0;
+  margin: 10vh 10vw;
+}
+
+.has-tooltip {
+  position:relative; /* making the .tooltip span a container for the tooltip text */
+}
+
+.has-tooltip:before {
+  content: attr(data-hovertext); /* here's the magic */
+  position:absolute;
+  
+  /* vertically center */
+  top:50%;
+  transform:translateY(-50%);
+  
+  /* move to right */
+  left:100%;
+  margin-left:15px; /* and add a small left margin */
+  
+  /* basic styles */
+  width:200px;
+  padding:10px;
+  border-radius:10px;
+  background:#000;
+  color: #fff;
+  text-align:center;
+  display:none; /* hide by default */
+}
+
+.has-tooltip:hover:before {
+  display:block;
+  background: red;
+}
+
+#payButton {
+  position: absolute;
+  margin: 0 auto;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+canvas {
+  position: absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index: -10;
+}
+
+#container {
+  display: relative;
+  perspective: 1000px;
+}
+
+#instructions {
+  display:block;
+  text-align: center;
+  padding-top: 20vh;
+}
+
+#depositQR {
+  display: block;
+  position: absolute;
+  margin: 0 auto;
+  left: 50%;
+  transform: translateX(-50%);
+  display:block;
+}
+
+.questionText {
+  position: absolute;
+  top: 0;
+  margin: 0 20px 0 20px;
+  color: white;
+  font-size: 30px;
+  opacity: 0;
+  display: none;
+}
+
+a.answer {
+  border-radius: 6px;
+  padding: 0 5px;
+  cursor: pointer;
+  &:hover {
+    background: white;
+    color: black;
+  }
+}
+
+#depositQR {
+  background: white;
+  padding: 10px;
+  display: block;
+  border-radius: 6px;
+}
+
+#payment-receipt {
+  opacity: 0;
+  position: absolute;
+  top: 30vh;
+  width: 100%;
+  text-align: center;
+}

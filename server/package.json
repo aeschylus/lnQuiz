@@ -1,0 +1,29 @@
+{
+  "name": "my21sats",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:aeschylus/my21sats.git",
+  "author": "Drew Winget <scipioaffricanus@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build-backend": "babel ./*.js -d dist",
+    "start": "yarn build-backend && nodemon dist/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.1",
+    "lowdb": "^3.0.0",
+    "nodemon": "^2.0.16",
+    "socket.io": "^4.5.1",
+    "zebedee-nodejs": "^0.4.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.5",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
+    "babel-loader": "^8.2.5"
+  }
+}

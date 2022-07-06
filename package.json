@@ -1,8 +1,0 @@
-{
-  "name": "arboles-frontend",
-  "version": "1.0.0",
-  "description": "The Learner's interface for daily language mastery.",
-  "main": "index.js",
-  "author": "Drew Winget <scipioaffricanus@gmail.com>",
-  "license": "MIT"
-}
