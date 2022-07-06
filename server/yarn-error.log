@@ -1,0 +1,58 @@
+Arguments: 
+  /Users/drewwinget/.nvm/versions/node/v14.18.2/bin/node /opt/homebrew/Cellar/yarn/1.22.19/libexec/bin/yarn.js start
+
+PATH: 
+  /Users/drewwinget/.bun/bin:/Users/drewwinget/.nvm/versions/node/v14.18.2/bin:/usr/local/lib/node_modules/yarn/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/Users/drewwinget/.nvm/versions/node/v15.14.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/TeX/texbin:/Users/drewwinget/.yarn/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  14.18.2
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  SyntaxError: /Users/drewwinget/Projects/zebedee-unlock/server/package.json: Unexpected token } in JSON at position 732
+      at JSON.parse (<anonymous>)
+      at /opt/homebrew/Cellar/yarn/1.22.19/libexec/lib/cli.js:1629:59
+      at Generator.next (<anonymous>)
+      at step (/opt/homebrew/Cellar/yarn/1.22.19/libexec/lib/cli.js:310:30)
+      at /opt/homebrew/Cellar/yarn/1.22.19/libexec/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "my21sats",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "git@github.com:aeschylus/my21sats.git",
+    "author": "Drew Winget <scipioaffricanus@gmail.com>",
+    "license": "MIT",
+    "scripts": {
+      "build-backend": "babel src/server/* -d dist",
+      "start": "yarn build-backend && nodemon dist/index.js"
+    },
+    "dependencies": {
+      "axios": "^0.27.2",
+      "body-parser": "^1.20.0",
+      "cors": "^2.8.5",
+      "express": "^4.18.1",
+      "nodemon": "^2.0.16",
+      "socket.io": "^4.5.1",
+      "zebedee-nodejs": "^0.4.1"
+    },
+    "devDependencies": {
+      "@babel/cli": "^7.17.10",
+      "@babel/core": "^7.18.5",
+      "@babel/preset-env": "^7.18.2",
+      "@babel/preset-react": "^7.17.12",
+      "babel-loader": "^8.2.5",
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

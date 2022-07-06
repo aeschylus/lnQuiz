@@ -1,0 +1,43 @@
+{
+  "name": "my21sats",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:aeschylus/my21sats.git",
+  "author": "Drew Winget <scipioaffricanus@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack serve"
+  },
+  "dependencies": {
+    "@xstate/inspect": "^0.7.0",
+    "cannon": "schteppe/cannon.js",
+    "d3": "^7.4.4",
+    "gsap": "^3.10.4",
+    "howler": "^2.2.3",
+    "html-webpack-plugin": "^5.5.0",
+    "qrcode": "^1.5.0",
+    "socket.io-client": "^4.5.1",
+    "standardized-audio-context": "^25.3.28",
+    "three": "^0.141.0",
+    "threejs-object-controls": "^1.2.8",
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.7.4",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.73.0",
+    "xstate": "^4.32.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.17.10",
+    "@babel/core": "^7.18.5",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/preset-react": "^7.17.12",
+    "babel-loader": "^8.2.5",
+    "css-loader": "^6.7.1",
+    "sass": "^1.52.2",
+    "sass-loader": "^13.0.0",
+    "style-loader": "^3.3.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.2"
+  }
+}
