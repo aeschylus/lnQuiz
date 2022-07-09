@@ -1,64 +1,81 @@
-import { assign, createMachine } from 'xstate';
+import { assign, createMachine } from 'xstate'
+import { sendParent, sendUpdate } from 'xstate/lib/actions'
+import isValidDomain from 'is-valid-domain'
 
-const formInputMachine = createMachine(
-  {
-    id: 'formInput',
-    initial: 'active',
-    states: {
-      active: {
-        on: {
-          DISABLE: 'disabled',
-        },
-        type: 'parallel',
-        states: {
-          focus: {
-            initial: 'unfocused',
-            states: {
-              focused: {
-                on: {
-                  BLUR: 'unfocused',
-                },
-              },
-              unfocused: {
-                on: {
-                  FOCUS: 'focused',
-                },
-              },
-            },
-          },
-          validation: {
-            initial: 'pending',
-            on: {
-              CHANGE: {
-                target: '.pending',
-                actions: 'assignValueToContext',
-              },
-            },
-            states: {
-              pending: {
-                on: {
-                  REPORT_INVALID: {
-                    target: 'invalid',
-                    actions: 'assignReasonToErrorMessage',
-                  },
-                },
-                invoke: {
-                  src: 'validateField',
-                  onDone: 'valid',
-                },
-              },
-              valid: {},
-              invalid: {},
-            },
-          },
-        },
+const formInputMachine = createMachine({
+  id: 'formInput',
+  initial: 'active',
+  context: {
+    value: null
+  },
+  states: {
+    active: {
+      on: {
+        DISABLE: 'disabled',
       },
-      disabled: {
-        on: {
-          ENABLE: 'active',
+      type: 'parallel',
+      states: {
+        focus: {
+          initial: 'unfocused',
+          states: {
+            focused: {
+              on: {
+                BLUR: 'unfocused',
+              },
+            },
+            unfocused: {
+              on: {
+                FOCUS: 'focused',
+              },
+            },
+          },
+        },
+        validation: {
+          initial: 'pending',
+          on: {
+            CHANGE: {
+              target: '.pending',
+              internal: false,
+              actions: [
+                'assignValueToContext',
+                sendParent((c, e) => (
+                  {
+                    type: 'UPDATE_ADDRESS',
+                    value: c.value
+                  }
+                ))
+              ],
+            },
+          },
+          states: {
+            pending: {
+              on: {
+                REPORT_INVALID: {
+                  target: 'invalid',
+                  actions: 'assignReasonToErrorMessage'
+                },
+                REPORT_VALID: 'valid',
+              },
+              invoke: {
+                src: 'validateField',
+              },
+            },
+            valid: {
+              entry: sendParent('INPUT_VALID')
+            },
+            invalid: {
+              entry: sendParent('INPUT_INVALID')
+            },
+          },
         },
       },
     },
+    disabled: {
+      on: {
+        ENABLE: 'active',
+      },
+    },
+  },
   },
   {
     actions: {
@@ -69,6 +86,7 @@ const formInputMachine = createMachine(
         };
       }),
       assignValueToContext: assign((context, event) => {
+        console.log(event)
         if (event.type !== 'CHANGE') return {};
         return {
           value: event.value,
@@ -77,11 +95,24 @@ const formInputMachine = createMachine(
     },
     services: {
       validateField: (context) => (send) => {
-        if (context.value === '') {
+        const { value } = context
+        const isValidEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(context.value)
+        console.log('running validation')
+
+        if (!isValidEmailFormat || context.value === '') {
           send({
             type: 'REPORT_INVALID',
             reason: 'Value cannot be empty',
           });
+          return
+        }
+
+        const hasValidDomain = isValidDomain(value.split('@')[1])
+        const isValidLnAddress = isValidEmailFormat && hasValidDomain
+
+        if (isValidLnAddress) {
+          send('REPORT_VALID');
+          return
         }
       },
     },

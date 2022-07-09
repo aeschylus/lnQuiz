@@ -1,17 +1,38 @@
 import express from 'express'
-import http from 'http';
+import http from 'http'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import { Server } from "socket.io";
+import { Server } from "socket.io"
 import * as axios from 'axios'
-import quizData from './quizData.js';
+import quizData from './quizData.js'
+import ngrok from 'ngrok'
+import helmet from 'helmet'
+require('log-timestamp')
 
 console.log(quizData)
 
+const ZBD_KEY = process.env.ZBD_API_KEY;
+const frontendOrigin = process.env.FRONTEND_ORIGIN;
+const port = process.env.LN_QUIZ_PORT;
+const sioPort = process.env.LN_QUIZ_SOCKET_PORT;
+
 const app = express()
-const port = 3000
-const webHookBase = 'https://388c-2603-8080-6f05-4682-9123-cce1-c412-985d.ngrok.io'
+let webHookBase
+
+async function connectNgrok() {
+  webHookBase = await ngrok.connect();
+}
+
+connectNgrok()
+
+// const webHookBase = 'https://388c-2603-8080-6f05-4682-9123-cce1-c412-985d.ngrok.io'
 app.use(cors());
+
+// disable cache for development
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store')
+  next()
+})
 
 //Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -20,7 +41,7 @@ app.use(bodyParser.json())
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:8080",
+    origin: frontendOrigin,
     methods: ["GET", "POST"]
   }
 });
@@ -29,8 +50,8 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
 
-server.listen(4000, () => {
-  console.log('listening for sockets on *:4000');
+server.listen(sioPort, () => {
+  console.log(`listening for sockets on *:${sioPort}`);
 });
 
 // server-side
@@ -51,7 +72,7 @@ const withdrawalData = {
 const options = {
   'headers': {
     'Content-Type': 'application/json',
-    'apikey': 'FTFdJRdVHpbHJ3NS5GPQ6MQFrX7mWXVa'
+    'apikey': ZBD_KEY
   }
 }
 
@@ -64,16 +85,9 @@ const options = {
 //         console.error(err);
 //     });
 
-// axios.post('https://api.zebedee.io/v0/withdrawal-requests', withdrawalData, options)
-//     .then((res) => {
-//         console.log(`Status: ${res.status}`);
-//         console.log('Info: ', res.data);
-//     }).catch((err) => {
-//         console.error(err);
-//     });
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.send('LN e updating')
 })
 
 app.post('/invoiceUpdates', (req, res) => {
@@ -124,37 +138,57 @@ app.get('/getInvoice', async (req, res) => {
     .catch(e => res.send(e))
 })
 
+app.get('/getWithdrawRequest', async (req, res) => {
+  console.log('Get Invoice Params')
+  console.log('Withdraw Request')
+  console.log(req.query)
+  const { socketId, lnAddress } = req.query
+
+  const withdrawalData = {
+    "expiresIn": 300,
+    "amount": "12000",
+    "description": "My Withdrawal Description",
+    "internalId": "11af01d092444a317cb33faa6b8304b8",
+    "callbackUrl": "https://your-website.com/callback"
+  }
+
+  axios.post('https://api.zebedee.io/v0/withdrawal-requests', withdrawalData, options)
+    .then((res) => {
+      console.log(`Status: ${res.status}`);
+      console.log('Info: ', res.data);
+    }).catch((err) => {
+      console.error(err);
+    });
+})
+
 app.post('/checkAnswer', (req, res) => {
   console.log('check answer body')
   // TODO: Send user ID for bakend
-  const { questionId, choice } = req.body
+  const { questionId, choice, lnAddress, socketId } = req.body
 
   console.log(req.body)
   console.log('correct? ', quizData[questionId].correctChoice === choice)
 
   if (quizData[questionId].correctChoice !== choice) {
-    res.json({ 
-      questionId,
-      choice,
-      result: 'incorrect' 
-    })
-    return
-  } else {
     res.json({
       questionId,
       choice,
-      result: 'correct'
+      result: 'incorrect'
     })
-
+    return
+  } else {
     // Payment Portion
     console.log('sent')
     const paymentData = {
-      "gamertag": "aeschylus",
+      "lnAddress": lnAddress,
       "amount": "1500",
-      "description": "testing liquidity"
+      "description": "testing liquidity",
+      "internalId": socketId
     };
 
-    axios.post('https://api.zebedee.io/v0/gamertag/send-payment', paymentData, options)
+    // axios.post('https://api.zebedee.io/v0/gamertag/send-payment', paymentData, options)
+
+    axios.post('https://api.zebedee.io/v0/ln-address/send-payment', paymentData, options)
       .then((response) => {
         console.log(`Status: ${response.status}`);
         console.log('Info: ', response.data);
@@ -163,6 +197,13 @@ app.post('/checkAnswer', (req, res) => {
         console.error(err);
         res.json(err)
       });
+
+    res.json({
+      questionId,
+      choice,
+      result: 'correct'
+    })
+
   }
 
 })

@@ -15,7 +15,7 @@ import { gsap, Circ, Sine } from 'gsap'
 import { ScrollTrigger, Draggable, MotionPathPlugin } from "gsap/all";
 import { createMachine, assign, interpret } from 'xstate'
 import formInputMachine from './inputMachine';
-import { inspect } from '@xstate/inspect'
+import { createWindowReceiver, inspect } from '@xstate/inspect'
 import { io } from "socket.io-client"
 import coinScene from './coinScene';
 import { Tween } from 'gsap/gsap-core';
@@ -24,8 +24,6 @@ const randPosition = (max) => {
   const negative = Math.random() < 0.5 ? -1 : 1
   return Math.floor(Math.random() * max) * negative;
 }
-
-console.log(formInputMachine)
 
 gsap.registerPlugin(ScrollTrigger, Draggable, MotionPathPlugin); 
 
@@ -115,14 +113,6 @@ const stackLayout = Array(100).fill(0).map((c, i) => {// coin index
 })()
 
 const renderWelcome = () => {
-  const payButton = document.createElement('a')
-  payButton.id = 'payButton'
-  payButton.className = 'button'
-
-  element.append(payButton)
-  payButton.innerText = 'start'
-
-  payButton.onclick = () => { state.send('ACTIVATE') }
   const welcomeMessage = `
   <div id="welcome-message">
   <h1>Welcome.</h1>
@@ -139,7 +129,7 @@ const renderWelcome = () => {
   <form>
   <label for="ln-address">Enter your Lightning Address to Start<label>
   <input type="email" id="ln-address" required>
-  <input name="ln-address" type="submit" value="Start" disabled>
+  <input name="ln-address" type="submit" disabled>
   </form>
   </div>
   `
@@ -147,12 +137,31 @@ const renderWelcome = () => {
     'afterbegin',
     welcomeMessage
   )
+  element.querySelector('#ln-address')
+    .addEventListener('input', (e) => {
+      console.log(state.state.children.addressInput.state.value)
+      state.state.children.addressInput.send(
+        'CHANGE', { value: e.target.value }
+      )
+    })
+  element.querySelector('form')
+    .addEventListener('submit', (e) => {
+      e.preventDefault()
+      state.send('SUBMIT_ADDRESS')
+    })
+}
+
+const enableSubmit = () => {
+  element.querySelector('input[type="submit"]').disabled = false
+}
+
+const renderInputError = () => {
+  element.querySelector('input[type="submit"]').disabled = true
 }
 
 const cleanUpWelcome = assign({
   questions: () => {
     document.querySelector('#welcome-message').remove()
-    document.querySelector('#payButton').remove()
     return questions
   }
 })
@@ -512,7 +521,8 @@ const checkAnswer = async (context, event) => {
       body: JSON.stringify({
         questionId: currentQuestionId,
         choice,
-        socketId: socket.id
+        socketId: socket.id,
+        lnAddress: context.lnAddress
       })
     }
   )
@@ -568,7 +578,7 @@ const renderScoreboard = (c,e) => {
 
 const appMachine = createMachine({
   id: 'promise',
-  initial: 'pending',
+  initial: 'welcome',
   context: {
     // coinScene: coinScene(canvas),
     currentQuestionId: 0,
@@ -581,18 +591,29 @@ const appMachine = createMachine({
     timeElapsed: null
   },
   states: {
-    pending: {
+    welcome: {
       entry: renderWelcome,
       exit: cleanUpWelcome,
       on: {
-        // ACTIVATE: 'loadingPayment',
-        ACTIVATE: 'loadingPayment',
-        ENTER_ADDRESS: {
+        SUBMIT_ADDRESS: {
+          target: 'loadingPayment',
           actions: assign({
-            lnAddress: (context, event) => event.lnAddress
+            lnAddress: (c,e) => {
+              return state.state.children.addressInput._state.context.value
+            }
           })
-        }
-      }
+        },
+        INPUT_VALID: {
+          actions: enableSubmit
+        },
+        INPUT_INVALID: {
+          actions: renderInputError
+        },
+      },
+      invoke: {
+        id: 'addressInput',
+        src: formInputMachine,
+      },
     },
     loadingPayment: {
       entry: () => {

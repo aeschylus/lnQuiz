@@ -7,14 +7,19 @@
   "license": "MIT",
   "scripts": {
     "build-backend": "babel ./*.js -d dist",
-    "start": "yarn build-backend && nodemon dist/index.js"
+    "start": "yarn build-backend && nodemon dist/index.js",
+    "start-dev": "babel-watch index.js"
   },
   "dependencies": {
     "axios": "^0.27.2",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "helmet": "^5.1.0",
+    "log-timestamp": "^0.3.0",
     "lowdb": "^3.0.0",
+    "ngrok": "^4.3.1",
     "nodemon": "^2.0.16",
     "socket.io": "^4.5.1",
     "zebedee-nodejs": "^0.4.1"
@@ -24,6 +29,7 @@
     "@babel/core": "^7.18.5",
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
-    "babel-loader": "^8.2.5"
+    "babel-loader": "^8.2.5",
+    "babel-watch": "^7.7.0"
   }
 }

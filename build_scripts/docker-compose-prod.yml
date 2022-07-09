@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  api:
+    image: node:18-alpine3.16
+    working_dir: /usr/src/app
+    command: > # install dependencies
+      sh -c 'npm cache clean --force && source .env && yarn install && yarn start-dev'
+    ports:
+      - ${LN_QUIZ_PORT}:${LN_QUIZ_PORT} #match port mapping
+      - ${LN_QUIZ_SOCKET_PORT}:${LN_QUIZ_SOCKET_PORT} #match port mapping
+    volumes:
+      - ../server:/usr/src/app # maps server source to container location
+      - /usr/src/app/node_modules # blank mapping to keep node_modules internal
+    environment:
+      ZBD_API_KEY: ${ZBD_API_KEY}
+      LN_QUIZ_PORT: ${LN_QUIZ_PORT}
