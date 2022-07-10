@@ -8,7 +8,6 @@ services:
       sh -c 'npm cache clean --force && source .env && yarn install && yarn start'
     ports:
       - ${LN_QUIZ_PORT}:${LN_QUIZ_PORT} #match port mapping
-      - ${LN_QUIZ_SOCKET_PORT}:${LN_QUIZ_SOCKET_PORT} #match port mapping
     volumes:
       - ../server:/usr/src/app # maps server source to container location
       - /usr/src/app/node_modules # blank mapping to keep node_modules internal
