@@ -59,6 +59,11 @@ io.on("connection", (socket) => {
   socket.join(socket.id);
 });
 
+io.on("connect_error", (err) => {
+  console.log('error', err);
+  socket.join(socket.id);
+});
+
 const withdrawalData = {
   "expiresIn": 300,
   "amount": "120000",
@@ -122,7 +127,7 @@ app.get('/getInvoice', async (req, res) => {
     "amount": "100000",
     "description": "My Charge Description",
     "internalId": socketId,
-    "callbackUrl": `${webHookBase}/invoiceUpdates`
+    "callbackUrl": `${webHookBase}:3003/invoiceUpdates`
   }
 
   axios
