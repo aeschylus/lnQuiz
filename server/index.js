@@ -42,12 +42,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: frontendOrigin,
-    methods: ["GET", "POST"]
-  }
-});
+const io = new Server(server)
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
@@ -57,6 +52,9 @@ server.listen(port, () => {
 io.on("connection", (socket) => {
   console.log('initial socket ID: ', socket.id);
   socket.join(socket.id);
+});
+io.on("error", (err) => {
+  console.log(err);
 });
 
 io.on("connect_error", (err) => {
@@ -127,7 +125,7 @@ app.get('/getInvoice', async (req, res) => {
     "amount": "100000",
     "description": "My Charge Description",
     "internalId": socketId,
-    "callbackUrl": `${webHookBase}:3003/invoiceUpdates`
+    "callbackUrl": `${webHookBase}/invoiceUpdates`
   }
 
   axios
