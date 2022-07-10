@@ -35,7 +35,12 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   ({apiBase, socketPath} = envVars)
 }
 
-const socket = io(apiBase, {path: socketPath});
+const socket = io(apiBase, {
+  path: socketPath
+});
+socket.on("connect_error", (err) => {
+  console.log(`connect_error due to ${err.message}`);
+});
 
 // pre-load sounds
 const strike = new Howl({
