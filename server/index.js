@@ -43,6 +43,7 @@ app.use(bodyParser.json())
 
 const server = http.createServer(app);
 const io = new Server(server, {
+  path: "/experiments/lnquiz/api",
   cors: {
     origin: frontendOrigin,
     methods: ["GET", "POST"]
