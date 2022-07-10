@@ -30,7 +30,6 @@ console.log(_quizData.default);
 const ZBD_KEY = process.env.ZBD_API_KEY;
 const frontendOrigin = process.env.FRONTEND_ORIGIN;
 const port = process.env.LN_QUIZ_PORT;
-const sioPort = process.env.LN_QUIZ_SOCKET_PORT;
 const app = (0, _express.default)();
 let webHookBase;
 
@@ -45,7 +44,7 @@ app.use((0, _cors.default)()); // disable cache for development
 app.use((req, res, next) => {
   res.set('Cache-Control', 'no-store');
   next();
-}); //Here we are configuring express to use body-parser as middle-ware.
+}); // Here we are configuring express to use body-parser as middle-ware.
 
 app.use(_bodyParser.default.urlencoded({
   extended: false
@@ -60,11 +59,8 @@ const io = new _socket.Server(server, {
     methods: ["GET", "POST"]
   }
 });
-app.listen(port, () => {
+io.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
-});
-server.listen(sioPort, () => {
-  console.log(`listening for sockets on *:${sioPort}`);
 }); // server-side
 
 io.on("connection", socket => {
@@ -92,7 +88,7 @@ const options = {
 //     });
 
 app.get('/', (req, res) => {
-  res.send('LN Quiz API Base, really. It ought to be updating');
+  res.send('LN e updating');
 });
 app.post('/invoiceUpdates', (req, res) => {
   console.log(req.body);

@@ -1,36 +1,41 @@
-import './styles/main.scss';
-import gold from './assets/gold.png';
-import floor from './assets/floor.jpeg';
-import satcoin from './assets/satcoin.gltf';
+import './styles/main.scss'
+import gold from './assets/gold.png'
+import floor from './assets/floor.jpeg'
+import satcoin from './assets/satcoin.gltf'
 import celloSound from './assets/cello.mp3'
 import lstrike from './assets/strike.mp3'
 import distantThunder from './assets/distant_thunder.mp3'
 import fail_strum from './assets/fail_strum.mp3'
-import QRCode from 'qrcode';
-import { Howl } from 'howler';
+import QRCode from 'qrcode'
+import { Howl } from 'howler'
 import {
   Vector3
 } from 'three';
 import { gsap, Circ, Sine } from 'gsap'
 import { ScrollTrigger, Draggable, MotionPathPlugin } from "gsap/all";
 import { createMachine, assign, interpret } from 'xstate'
-import formInputMachine from './inputMachine';
-import { createWindowReceiver, inspect } from '@xstate/inspect'
+import formInputMachine from './inputMachine'
+import { inspect } from '@xstate/inspect'
 import { io } from "socket.io-client"
-import coinScene from './coinScene';
-import { Tween } from 'gsap/gsap-core';
+import coinScene from './coinScene'
+import envVars from './envVars'
+import devEnvVars from './devEnvVars'
+let apiBase
 
 const randPosition = (max) => {
   const negative = Math.random() < 0.5 ? -1 : 1
   return Math.floor(Math.random() * max) * negative;
 }
 
-gsap.registerPlugin(ScrollTrigger, Draggable, MotionPathPlugin); 
 
-const socket = io("http://localhost:4000");
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  ({apiBase} = devEnvVars)
+  inspect({ iframe: false });
+} else {
+  ({apiBase} = envVars)
+}
 
-
-inspect({ iframe: false });
+const socket = io(apiBase);
 
 // pre-load sounds
 const strike = new Howl({
@@ -106,7 +111,7 @@ const stackLayout = Array(100).fill(0).map((c, i) => {// coin index
 });
 
 (async () => {
-  const response = await fetch('http://localhost:3000/questions')
+  const response = await fetch(`${apiBase}/questions`)
   questions = await response.json()
   console.log(questions)
   scene = coinScene()
@@ -172,9 +177,9 @@ const renderPaymentFlow = async () => {
   payThing.innerText = 'Scan with Zebedee'
 
   const response = await fetch(
-    'http://localhost:3000/getInvoice?' + new URLSearchParams({
+    `${apiBase}/getInvoice?${new URLSearchParams({
       socketId: socket.id
-    }),
+    })}`,
     {
       // mode: 'no-cors',
       method: 'GET',
@@ -510,7 +515,7 @@ const checkAnswer = async (context, event) => {
   const { currentQuestionId } = context
   console.log('checking question: ', currentQuestionId)
   let response = await fetch(
-    'http://localhost:3000/checkAnswer',
+    `${apiBase}/checkAnswer`,
     {
       // mode: 'no-cors',
       method: 'POST',

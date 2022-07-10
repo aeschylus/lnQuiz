@@ -3,27 +3,16 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack')
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   target: 'web',
   entry: {
-    budndle: path.resolve(__dirname, 'src/index.js'),
+    bundle: path.resolve(__dirname, 'src/index.js'),
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name][contenthash].js',
+    filename: '[name].js',
     assetModuleFilename: '[name][ext]',
     clean: true
-  },
-  devtool: 'source-map',
-  devServer: {
-    static: {
-      directory: path.resolve(__dirname, 'dist'),
-    },
-    port: 8080,
-    open: true,
-    hot: true,
-    compress: true,
-    historyApiFallback: true
   },
   module: {
     rules: [
@@ -65,7 +54,7 @@ module.exports = {
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
-    }),
+    })
   ],
   resolve: {
     fallback: {

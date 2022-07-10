@@ -6,8 +6,8 @@
   "author": "Drew Winget <scipioaffricanus@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack serve"
+    "build": "NODE_ENV=production && webpack --config webpack.config.prod.js",
+    "dev": "NODE_ENV=development && webpack serv --config webpack.config.js"
   },
   "dependencies": {
     "@xstate/inspect": "^0.7.0",
@@ -17,6 +17,7 @@
     "howler": "^2.2.3",
     "html-webpack-plugin": "^5.5.0",
     "is-valid-domain": "^0.1.6",
+    "process": "^0.11.10",
     "qrcode": "^1.5.0",
     "socket.io-client": "^4.5.1",
     "standardized-audio-context": "^25.3.28",

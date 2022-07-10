@@ -14,7 +14,6 @@ console.log(quizData)
 const ZBD_KEY = process.env.ZBD_API_KEY;
 const frontendOrigin = process.env.FRONTEND_ORIGIN;
 const port = process.env.LN_QUIZ_PORT;
-const sioPort = process.env.LN_QUIZ_SOCKET_PORT;
 
 const app = express()
 let webHookBase
@@ -34,32 +33,28 @@ app.use((req, res, next) => {
   next()
 })
 
-//Here we are configuring express to use body-parser as middle-ware.
+// Here we are configuring express to use body-parser as middle-ware.
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: frontendOrigin,
+    // origin: frontendOrigin,
+    origin: 'http://localhost:8080',
     methods: ["GET", "POST"]
   }
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-
-server.listen(sioPort, () => {
-  console.log(`listening for sockets on *:${sioPort}`);
-});
 
 // server-side
 io.on("connection", (socket) => {
   console.log('initial socket ID: ', socket.id);
   socket.join(socket.id);
 });
-
 
 const withdrawalData = {
   "expiresIn": 300,
@@ -76,7 +71,6 @@ const options = {
   }
 }
 
-
 // axios.post('https://api.zebedee.io/v0/charges', fundingData, options)
 //     .then((res) => {
 //         console.log(`Status: ${res.status}`);
@@ -85,9 +79,8 @@ const options = {
 //         console.error(err);
 //     });
 
-
 app.get('/', (req, res) => {
-  res.send('LN e updating')
+  res.send('API Base')
 })
 
 app.post('/invoiceUpdates', (req, res) => {
