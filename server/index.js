@@ -177,7 +177,7 @@ app.post('/checkAnswer', (req, res) => {
     console.log('sent')
     const paymentData = {
       "lnAddress": lnAddress,
-      "amount": "1500",
+      "amount": "2000",
       "description": "testing liquidity",
       "internalId": socketId
     };
@@ -188,20 +188,22 @@ app.post('/checkAnswer', (req, res) => {
       .then((response) => {
         console.log(`Status: ${response.status}`);
         console.log('Info: ', response.data);
-        res.json(response.data)
+        res.json({
+          questionId,
+          choice,
+          result: 'correct',
+          paymentData: response.data
+        })
       }).catch((err) => {
         console.error(err);
-        res.json(err)
+        res.json({
+          questionId,
+          choice,
+          result: 'correct',
+          paymentData: err
+        })
       });
-
-    res.json({
-      questionId,
-      choice,
-      result: 'correct'
-    })
-
   }
-
 })
 
 const sendPayment = () => {
