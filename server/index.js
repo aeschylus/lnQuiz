@@ -26,6 +26,9 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   webHookBase = process.env.API_BASE
 }
 
+console.log('webhook Base')
+console.log(webHookBase)
+
 app.use(cors());
 
 // disable cache for development
