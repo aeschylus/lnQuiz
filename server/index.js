@@ -43,7 +43,6 @@ app.use(bodyParser.json())
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  path: "/experiments/lnquiz/api",
   cors: {
     origin: frontendOrigin,
     methods: ["GET", "POST"]
@@ -57,14 +56,6 @@ server.listen(port, () => {
 // server-side
 io.on("connection", (socket) => {
   console.log('initial socket ID: ', socket.id);
-  socket.join(socket.id);
-});
-io.on("error", (err) => {
-  console.log(err);
-});
-
-io.on("connect_error", (err) => {
-  console.log('error', err);
   socket.join(socket.id);
 });
 
