@@ -21,13 +21,11 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   async function connectNgrok() {
     webHookBase = await ngrok.connect();
   }
+  connectNgrok()
 } else {
   webHookBase = process.env.API_BASE
 }
 
-connectNgrok()
-
-// const webHookBase = 'https://388c-2603-8080-6f05-4682-9123-cce1-c412-985d.ngrok.io'
 app.use(cors());
 
 // disable cache for development
