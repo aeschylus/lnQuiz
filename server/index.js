@@ -9,17 +9,20 @@ import ngrok from 'ngrok'
 import helmet from 'helmet'
 require('log-timestamp')
 
-console.log(quizData)
-
 const ZBD_KEY = process.env.ZBD_API_KEY;
 const frontendOrigin = process.env.FRONTEND_ORIGIN;
 const port = process.env.LN_QUIZ_PORT;
 
 const app = express()
+
 let webHookBase
 
-async function connectNgrok() {
-  webHookBase = await ngrok.connect();
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  async function connectNgrok() {
+    webHookBase = await ngrok.connect();
+  }
+} else {
+  webHookBase = process.env.API_BASE
 }
 
 connectNgrok()
