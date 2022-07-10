@@ -35,9 +35,10 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
   ({apiBase, socketPath} = envVars)
 }
 
-const socket = io(apiBase, {
-  path: socketPath
-});
+// const socket = io(apiBase, {
+//   path: socketPath
+// });
+const socket = io('https://aeschylus.dev/experiments/lnquiz/api:3003');
 socket.on("connect_error", (err) => {
   console.log(`connect_error due to ${err.message}`);
 });
