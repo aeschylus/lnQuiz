@@ -40,8 +40,7 @@ app.use(bodyParser.json())
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    // origin: frontendOrigin,
-    origin: 'http://localhost:8080',
+    origin: frontendOrigin,
     methods: ["GET", "POST"]
   }
 });
