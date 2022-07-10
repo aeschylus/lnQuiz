@@ -21,21 +21,21 @@ import coinScene from './coinScene'
 import envVars from './envVars'
 import devEnvVars from './devEnvVars'
 let apiBase
+let socketPath
 
 const randPosition = (max) => {
   const negative = Math.random() < 0.5 ? -1 : 1
   return Math.floor(Math.random() * max) * negative;
 }
 
-
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-  ({apiBase} = devEnvVars)
+  ({apiBase, socketPath} = devEnvVars)
   inspect({ iframe: false });
 } else {
-  ({apiBase} = envVars)
+  ({apiBase, socketPath} = envVars)
 }
 
-const socket = io(apiBase);
+const socket = io(apiBase, {path: socketPath});
 
 // pre-load sounds
 const strike = new Howl({
