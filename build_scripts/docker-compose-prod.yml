@@ -5,7 +5,7 @@ services:
     image: node:18-alpine3.16
     working_dir: /usr/src/app
     command: > # install dependencies
-      sh -c 'yarn cache clean && source .env && yarn install && yarn start'
+      sh -c 'yarn cache clean && yarn install && source .env && yarn start'
     ports:
       - ${LN_QUIZ_PORT}:${LN_QUIZ_PORT} #match port mapping
     volumes:
