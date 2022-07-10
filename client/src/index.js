@@ -40,7 +40,12 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 // });
 const socket = io('https://aeschylus.dev/experiments/lnquiz/api:3003');
 socket.on("connect_error", (err) => {
-  console.log(`connect_error due to ${err.message}`);
+  console.log('connect_error')
+  console.log(err);
+});
+socket.on("error", (err) => {
+  console.log('error')
+  console.log(err);
 });
 
 // pre-load sounds

@@ -42,7 +42,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
 const server = http.createServer(app);
-const io = new Server(server)
+const io = new Server(server, {
+  cors: {
+    origin: frontendOrigin,
+    methods: ["GET", "POST"]
+  }
+});
 
 server.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
