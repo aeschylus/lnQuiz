@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=production && webpack --config webpack.config.prod.js",
-    "dev": "NODE_ENV=development && webpack serv --config webpack.config.js"
+    "dev": "NODE_ENV=development && webpack serve --config webpack.config.js"
   },
   "dependencies": {
     "@xstate/inspect": "^0.7.0",
